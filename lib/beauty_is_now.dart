@@ -1,4 +1,4 @@
-/// A modern, high-polish Flutter UI package featuring Apple-style segmented bars,
+/// A modern, high-polish Flutter UI package featuring fluid segmented bars,
 /// glassmorphic modal windows, and draggable floating navigation bars.
 ///
 /// Crafted for all platforms (Android, iOS, Web, macOS, Windows, Linux)

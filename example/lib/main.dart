@@ -176,7 +176,7 @@ class _ShowcaseScreenState extends State<ShowcaseScreen> {
                 children: [
                   // SECTION 1: Segmented Control
                   _buildSectionHeader(
-                    title: '1. Apple Segmented Bar',
+                    title: '1. Fluid Segmented Bar',
                     subtitle: 'Drag or tap with spring physics and scale expansion.',
                   ),
                   const SizedBox(height: 12),

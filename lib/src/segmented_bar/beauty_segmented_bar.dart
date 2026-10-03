@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'segmented_item.dart';
 
-/// An interactive, Apple-style segmented bar featuring smooth spring drag physics,
+/// An interactive, fluid segmented bar featuring smooth spring drag physics,
 /// dynamic scale expansion, adaptive light/dark theming, and full RTL support.
 class BeautySegmentedBar extends StatefulWidget {
   /// The list of items displayed in the segmented bar.

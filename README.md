@@ -6,7 +6,7 @@
 [![license](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Web%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux-teal.svg)](https://flutter.dev)
 
-A modern, high-polish Flutter UI package featuring Apple-style segmented controls, frosted glass modal windows with drag-to-dismiss gestures, and spring-physics draggable navigation bars.
+A modern, high-polish Flutter UI package featuring fluid segmented bars, frosted glass modal windows with drag-to-dismiss gestures, and spring-physics draggable navigation bars.
 
 Engineered with zero third-party dependencies, 100% pure Flutter, full Light & Dark mode adaptation, and cross-platform compatibility out-of-the-box.
 
@@ -14,7 +14,7 @@ Engineered with zero third-party dependencies, 100% pure Flutter, full Light & D
 
 ## ✨ Features
 
-- 🍎 **BeautySegmentedBar**: Interactive Apple-style segmented bar with spring drag physics, touch scale expansion, adaptive light/dark theming, and full RTL (Right-to-Left) support.
+- 🎛️ **BeautySegmentedBar**: Interactive fluid segmented bar with spring drag physics, touch scale expansion, adaptive light/dark theming, and full RTL (Right-to-Left) support.
 - 🪟 **BeautyWindow & showBeautyWindow**: Glassmorphic modal window with a swipe-down-to-dismiss handle, circular close 'X' button, vibrant blue checkmark button, and smooth entrance transitions.
 - 🧭 **BeautyNavBar**: Sleek draggable floating navigation bar with spring physics, active pill expansion during gestures, and haptic feedback.
 - 🌓 **Adaptive Theming**: Automatically adapts to Light and Dark modes without any extra configuration.
@@ -23,21 +23,12 @@ Engineered with zero third-party dependencies, 100% pure Flutter, full Light & D
 
 ---
 
-## 📸 Preview / Screenshots
-
-<!-- 
-TIP: Host your demo GIFs or screenshots on GitHub in an `assets/` or `screenshots/` directory,
-and use raw GitHub links so they render seamlessly on both GitHub and pub.dev!
-Example: https://raw.githubusercontent.com/<username>/<repo>/main/screenshots/demo.gif
--->
+## 📸 Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/preview_segmented.png" alt="BeautySegmentedBar Preview" width="30%" />
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/preview_window.png" alt="BeautyWindow Preview" width="30%" />
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/preview_navbar.png" alt="BeautyNavBar Preview" width="30%" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/segmented_bar.gif" alt="BeautySegmentedBar Preview" width="48%" style="border-radius: 12px; margin: 4px;" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/navBar.gif" alt="BeautyNavBar Preview" width="48%" style="border-radius: 12px; margin: 4px;" />
 </p>
-
-> 💡 **Adding Video & GIF Previews**: Check out the [How to Add Images & Videos](#-how-to-add-images--videos-to-pubdev) section below!
 
 ---
 
@@ -66,7 +57,11 @@ import 'package:beauty_is_now/beauty_is_now.dart';
 
 ## 📖 Usage Examples
 
-### 1. Apple-Style Segmented Bar (`BeautySegmentedBar`)
+### 1. Fluid Segmented Bar (`BeautySegmentedBar`)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/segmented_bar.gif" alt="BeautySegmentedBar GIF" width="480" style="border-radius: 14px;" />
+</p>
 
 ```dart
 int _selectedSegment = 0;
@@ -131,6 +126,10 @@ You can also use `BeautyWindow` directly inside any custom route or bottom sheet
 
 ### 3. Draggable Floating Navigation Bar (`BeautyNavBar`)
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/navBar.gif" alt="BeautyNavBar GIF" width="480" style="border-radius: 14px;" />
+</p>
+
 ```dart
 int _currentNavIndex = 0;
 
@@ -173,7 +172,7 @@ BeautySegmentedBar(
 pub.dev does **not** store media files directly inside the package bundle. To showcase images, GIFs, and videos:
 
 1. **Host images/GIFs on GitHub**:
-   - Push your screenshots or recorded GIF to your GitHub repository (e.g. in an `assets/` or `screenshots/` directory).
+   - Push your screenshots or recorded GIF to your GitHub repository (e.g. in the `assets/` directory).
    - Use the **raw GitHub URL** in your `README.md`:
      ```markdown
      ![Demo Preview](https://raw.githubusercontent.com/<YOUR_USERNAME>/beauty_is_now/main/assets/demo.gif)
