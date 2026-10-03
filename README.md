@@ -26,28 +26,30 @@ Engineered with zero third-party dependencies, 100% pure Flutter, full Light & D
 ## 📸 Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/segmented_bar.gif" alt="BeautySegmentedBar Preview" width="48%" style="border-radius: 12px; margin: 4px;" />
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/navBar.gif" alt="BeautyNavBar Preview" width="48%" style="border-radius: 12px; margin: 4px;" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/segmented_bar.gif" alt="BeautySegmentedBar Preview" width="31%" style="border-radius: 12px; margin: 3px;" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/window.png" alt="BeautyWindow Preview" width="31%" style="border-radius: 12px; margin: 3px;" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/navBar.gif" alt="BeautyNavBar Preview" width="31%" style="border-radius: 12px; margin: 3px;" />
 </p>
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Install & Use (Step-by-Step)
 
-Add `beauty_is_now` to your `pubspec.yaml`:
+### Step 1: Add to your Flutter project
 
-```yaml
-dependencies:
-  beauty_is_now: ^1.0.0
-```
-
-Or run:
+Open your project's terminal and run:
 
 ```bash
 flutter pub add beauty_is_now
 ```
 
-Then import the package in your Dart code:
+*(This automatically adds `beauty_is_now: ^1.0.2` to your `pubspec.yaml`)*
+
+---
+
+### Step 2: Import the package
+
+In any Dart file where you want to use the widgets (e.g. `main.dart` or your screen file):
 
 ```dart
 import 'package:beauty_is_now/beauty_is_now.dart';
@@ -55,32 +57,55 @@ import 'package:beauty_is_now/beauty_is_now.dart';
 
 ---
 
-## 📖 Usage Examples
+## 📖 Complete Copy-Paste Examples
 
 ### 1. Fluid Segmented Bar (`BeautySegmentedBar`)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/segmented_bar.gif" alt="BeautySegmentedBar GIF" width="480" style="border-radius: 14px;" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/segmented_bar.gif" alt="BeautySegmentedBar GIF" width="460" style="border-radius: 14px;" />
 </p>
 
-```dart
-int _selectedSegment = 0;
+Use this inside any `StatefulWidget`:
 
-BeautySegmentedBar.fromStrings(
-  items: const ['Overview', 'Analytics', 'Settings'],
-  currentIndex: _selectedSegment,
-  onChanged: (index) {
-    setState(() => _selectedSegment = index);
-  },
-)
+```dart
+class SegmentedDemo extends StatefulWidget {
+  const SegmentedDemo({super.key});
+
+  @override
+  State<SegmentedDemo> createState() => _SegmentedDemoState();
+}
+
+class _SegmentedDemoState extends State<SegmentedDemo> {
+  // Store the active index
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: BeautySegmentedBar.fromStrings(
+            items: const ['Overview', 'Analytics', 'Settings'],
+            currentIndex: _selectedIndex,
+            onChanged: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
 ```
 
-With icons and custom items:
-
+#### With Custom Icons:
 ```dart
 BeautySegmentedBar(
-  currentIndex: _selectedSegment,
-  onChanged: (index) => setState(() => _selectedSegment = index),
+  currentIndex: _selectedIndex,
+  onChanged: (index) => setState(() => _selectedIndex = index),
   items: const [
     BeautySegmentedItem(label: 'Day', icon: Icons.wb_sunny_rounded),
     BeautySegmentedItem(label: 'Week', icon: Icons.calendar_view_week_rounded),
@@ -93,65 +118,99 @@ BeautySegmentedBar(
 
 ### 2. Glassmorphic Modal Window (`BeautyWindow` & `showBeautyWindow`)
 
-Present a modern dialog with top drag handle, 'X' close button, and circular blue checkmark button:
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/window.png" alt="BeautyWindow Preview" width="380" style="border-radius: 14px;" />
+</p>
+
+To show the modal window from any button click:
 
 ```dart
-showBeautyWindow(
-  context,
-  title: 'Edit Workspace',
-  onConfirm: () {
-    // Perform save action
-    Navigator.of(context).pop();
-  },
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      TextField(
-        decoration: InputDecoration(
-          labelText: 'Workspace Name',
-          hintText: 'e.g. Mobile App Redesign',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
+ElevatedButton(
+  onPressed: () {
+    showBeautyWindow(
+      context,
+      title: 'New Task',
+      onConfirm: () {
+        // Triggered when the blue checkmark button is tapped
+        print('Confirmed!');
+        Navigator.of(context).pop();
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              labelText: 'Task Title',
+              hintText: 'e.g. Design Landing Page',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text('Swipe down or tap outside to close.'),
+        ],
       ),
-      const SizedBox(height: 16),
-      const Text('Swipe down or tap outside to dismiss.'),
-    ],
-  ),
-);
+    );
+  },
+  child: const Text('Open Modal Window'),
+)
 ```
-
-You can also use `BeautyWindow` directly inside any custom route or bottom sheet.
 
 ---
 
 ### 3. Draggable Floating Navigation Bar (`BeautyNavBar`)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/navBar.gif" alt="BeautyNavBar GIF" width="480" style="border-radius: 14px;" />
+  <img src="https://raw.githubusercontent.com/ibrahim2906/beauty_is_now/main/assets/navBar.gif" alt="BeautyNavBar GIF" width="460" style="border-radius: 14px;" />
 </p>
 
-```dart
-int _currentNavIndex = 0;
+Place `BeautyNavBar` directly in your `Scaffold.bottomNavigationBar`:
 
-BeautyNavBar(
-  currentIndex: _currentNavIndex,
-  onChanged: (index) => setState(() => _currentNavIndex = index),
-  items: const [
-    BeautyNavItem(label: 'Home', icon: Icons.home_rounded),
-    BeautyNavItem(label: 'Search', icon: Icons.search_rounded),
-    BeautyNavItem(label: 'Tasks', icon: Icons.check_circle_outline_rounded, badge: '3'),
-    BeautyNavItem(label: 'Profile', icon: Icons.person_rounded),
-  ],
-)
+```dart
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentNavIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Selected Tab: $_currentNavIndex'),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: BeautyNavBar(
+          currentIndex: _currentNavIndex,
+          onChanged: (index) {
+            setState(() {
+              _currentNavIndex = index;
+            });
+          },
+          items: const [
+            BeautyNavItem(label: 'Home', icon: Icons.home_rounded),
+            BeautyNavItem(label: 'Search', icon: Icons.search_rounded),
+            BeautyNavItem(label: 'Tasks', icon: Icons.check_circle_outline_rounded, badge: '3'),
+            BeautyNavItem(label: 'Profile', icon: Icons.person_rounded),
+          ],
+        ),
+      ),
+    );
+  }
+}
 ```
 
 ---
 
 ## 🎨 Dark & Light Mode Customization
 
-Every widget in `beauty_is_now` automatically respects your app's `Theme.of(context).brightness`.
+Every widget in `beauty_is_now` automatically detects whether your app is currently in Light Mode or Dark Mode (`Theme.of(context).brightness`).
 
-You can also explicitly customize the colors:
+You can also pass custom colors directly:
 
 ```dart
 BeautySegmentedBar(
@@ -164,42 +223,6 @@ BeautySegmentedBar(
   onChanged: ...,
 )
 ```
-
----
-
-## 🎬 How to Add Images & Videos to pub.dev
-
-pub.dev does **not** store media files directly inside the package bundle. To showcase images, GIFs, and videos:
-
-1. **Host images/GIFs on GitHub**:
-   - Push your screenshots or recorded GIF to your GitHub repository (e.g. in the `assets/` directory).
-   - Use the **raw GitHub URL** in your `README.md`:
-     ```markdown
-     ![Demo Preview](https://raw.githubusercontent.com/<YOUR_USERNAME>/beauty_is_now/main/assets/demo.gif)
-     ```
-2. **Embed Videos (YouTube / Loom / MP4)**:
-   - For YouTube or Loom videos, add a clickable thumbnail in `README.md`:
-     ```markdown
-     [![Watch the video](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
-     ```
-   - For direct MP4 or WebM video links:
-     ```markdown
-     [▶️ Watch Demo Video](https://your-domain.com/demo.mp4)
-     ```
-
----
-
-## 🚀 Publishing to pub.dev Guide
-
-1. **Verify your package**:
-   ```bash
-   dart pub publish --dry-run
-   ```
-2. **Publish**:
-   ```bash
-   dart pub publish
-   ```
-3. Follow the Google authentication link printed in the terminal.
 
 ---
 

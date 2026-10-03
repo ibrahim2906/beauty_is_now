@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.2
+
+* Cleaned up README documentation and user guides.
+
 ## 1.0.1
 
 * Added interactive demo GIFs to README and documentation.
