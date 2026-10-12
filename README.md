@@ -43,7 +43,7 @@ Open your project's terminal and run:
 flutter pub add beauty_is_now
 ```
 
-*(This automatically adds `beauty_is_now: ^1.1.0` to your `pubspec.yaml`)*
+*(This automatically adds `beauty_is_now: ^1.1.2` to your `pubspec.yaml`)*
 
 ---
 
