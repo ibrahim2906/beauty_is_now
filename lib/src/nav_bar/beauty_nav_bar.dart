@@ -65,6 +65,17 @@ class BeautyNavBar extends StatefulWidget {
   /// Optional margin around the nav bar.
   final EdgeInsetsGeometry? margin;
 
+  /// Fixed width of the nav bar.
+  ///
+  /// When `null` (default), the bar expands to fill the available width.
+  /// When set, the bar renders at exactly this width and is centered
+  /// horizontally within its parent.
+  final double? width;
+
+  /// Alignment of the bar when a fixed [width] is set. Defaults to
+  /// [Alignment.center].
+  final AlignmentGeometry alignment;
+
   /// Creates a [BeautyNavBar].
   const BeautyNavBar({
     super.key,
@@ -84,6 +95,8 @@ class BeautyNavBar extends StatefulWidget {
     this.customIconBuilder,
     this.enableHaptics = true,
     this.margin,
+    this.width,
+    this.alignment = Alignment.center,
   });
 
   @override
@@ -120,8 +133,8 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
             ? Colors.white.withValues(alpha: 0.16)
             : primary.withValues(alpha: 0.14));
 
-    final effectiveActiveColor = widget.activeColor ??
-        (isDark ? Colors.white : primary);
+    final effectiveActiveColor =
+        widget.activeColor ?? (isDark ? Colors.white : primary);
 
     final effectiveInactiveColor = widget.inactiveColor ??
         (isDark
@@ -162,9 +175,11 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: effectiveBg,
-                      borderRadius: BorderRadius.circular(widget.containerRadius),
+                      borderRadius:
+                          BorderRadius.circular(widget.containerRadius),
                       border: Border.all(color: effectiveBorder, width: 1.0),
-                      boxShadow: widget.containerShadow ?? defaultContainerShadow,
+                      boxShadow:
+                          widget.containerShadow ?? defaultContainerShadow,
                     ),
                   ),
                 ),
@@ -193,7 +208,8 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
                         ),
                         decoration: BoxDecoration(
                           color: effectivePillColor,
-                          borderRadius: BorderRadius.circular(widget.pillRadius),
+                          borderRadius:
+                              BorderRadius.circular(widget.pillRadius),
                           boxShadow: widget.pillShadow ??
                               (isDark
                                   ? [
@@ -263,7 +279,8 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
 
                       index = index.clamp(0, widget.items.length - 1);
 
-                      if (index != widget.currentIndex && widget.enableHaptics) {
+                      if (index != widget.currentIndex &&
+                          widget.enableHaptics) {
                         HapticFeedback.selectionClick();
                       }
                       setState(() => _dragging = false);
@@ -275,7 +292,8 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
                     child: Row(
                       children: List.generate(widget.items.length, (i) {
                         final item = widget.items[i];
-                        final bool active = hasSelection && (i == widget.currentIndex);
+                        final bool active =
+                            hasSelection && (i == widget.currentIndex);
                         final Color color = active
                             ? effectiveActiveColor
                             : effectiveInactiveColor;
@@ -315,7 +333,8 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
                                             top: -4,
                                             right: -8,
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 5,
                                                 vertical: 1.5,
                                               ),
@@ -355,6 +374,17 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
         },
       ),
     );
+
+    if (widget.width != null) {
+      navBarWidget = Align(
+        alignment: widget.alignment,
+        heightFactor: 1.0,
+        child: SizedBox(
+          width: widget.width,
+          child: navBarWidget,
+        ),
+      );
+    }
 
     if (widget.margin != null) {
       navBarWidget = Padding(

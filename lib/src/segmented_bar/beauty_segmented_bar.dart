@@ -51,6 +51,17 @@ class BeautySegmentedBar extends StatefulWidget {
   /// Optional custom box shadows for the active pill.
   final List<BoxShadow>? pillShadows;
 
+  /// Fixed width of the segmented bar.
+  ///
+  /// When `null` (default), the bar expands to fill the available width.
+  /// When set, the bar renders at exactly this width and is aligned
+  /// horizontally according to [alignment].
+  final double? width;
+
+  /// Alignment of the bar when a fixed [width] is set. Defaults to
+  /// [Alignment.center].
+  final AlignmentGeometry alignment;
+
   /// Creates a [BeautySegmentedBar].
   const BeautySegmentedBar({
     super.key,
@@ -68,6 +79,8 @@ class BeautySegmentedBar extends StatefulWidget {
     this.borderRadius = 100.0,
     this.enableHaptics = true,
     this.pillShadows,
+    this.width,
+    this.alignment = Alignment.center,
   });
 
   /// Convenient constructor that builds segments from a simple list of strings.
@@ -87,6 +100,8 @@ class BeautySegmentedBar extends StatefulWidget {
     double borderRadius = 100.0,
     bool enableHaptics = true,
     List<BoxShadow>? pillShadows,
+    double? width,
+    AlignmentGeometry alignment = Alignment.center,
   }) {
     return BeautySegmentedBar(
       key: key,
@@ -104,6 +119,8 @@ class BeautySegmentedBar extends StatefulWidget {
       borderRadius: borderRadius,
       enableHaptics: enableHaptics,
       pillShadows: pillShadows,
+      width: width,
+      alignment: alignment,
     );
   }
 
@@ -132,8 +149,8 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
 
     final effectiveTrackBorder = widget.trackBorderColor;
 
-    final effectivePillColor = widget.pillColor ??
-        (isDark ? const Color(0xFF1E222D) : Colors.white);
+    final effectivePillColor =
+        widget.pillColor ?? (isDark ? const Color(0xFF1E222D) : Colors.white);
 
     final effectivePillBorder = widget.pillBorderColor;
 
@@ -145,198 +162,214 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
 
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Padding(
-      padding: widget.padding,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final double totalWidth = constraints.maxWidth;
-          final int count = widget.items.length;
-          final double tabWidth = count > 0 ? (totalWidth / count) : totalWidth;
-          final double minX = 0;
-          final double maxX = (totalWidth - tabWidth).clamp(0.0, totalWidth);
-          final int safeCurrentIndex = widget.currentIndex.clamp(0, count - 1);
-          final double baseX = safeCurrentIndex * tabWidth;
-          final double pillX = _dragging ? _dragX : baseX;
+    Widget segmentedBar = LayoutBuilder(
+      builder: (context, constraints) {
+        final double totalWidth = constraints.maxWidth;
+        final int count = widget.items.length;
+        final double tabWidth = count > 0 ? (totalWidth / count) : totalWidth;
+        final double minX = 0;
+        final double maxX = (totalWidth - tabWidth).clamp(0.0, totalWidth);
+        final int safeCurrentIndex = widget.currentIndex.clamp(0, count - 1);
+        final double baseX = safeCurrentIndex * tabWidth;
+        final double pillX = _dragging ? _dragX : baseX;
 
-          return SizedBox(
-            height: widget.height,
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                // 1. Track Background Container
-                Positioned.fill(
+        return SizedBox(
+          height: widget.height,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              // 1. Track Background Container
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: effectiveTrackColor,
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
+                    border: effectiveTrackBorder != null
+                        ? Border.all(color: effectiveTrackBorder, width: 1)
+                        : null,
+                  ),
+                ),
+              ),
+
+              // 2. Draggable Animated Active Pill
+              AnimatedPositioned(
+                duration: _dragging
+                    ? Duration.zero
+                    : const Duration(milliseconds: 320),
+                curve: _springCurve,
+                left: isRtl
+                    ? (totalWidth - (pillX + tabWidth - 3))
+                        .clamp(0.0, totalWidth)
+                    : (pillX + 3).clamp(0.0, totalWidth),
+                top: _dragging ? -4 : 4,
+                bottom: _dragging ? -4 : 4,
+                width: (tabWidth - 6).clamp(0.0, totalWidth),
+                child: AnimatedScale(
+                  scale: _dragging ? 1.08 : 1.0,
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOutCubic,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: effectiveTrackColor,
-                      borderRadius: BorderRadius.circular(widget.borderRadius),
-                      border: effectiveTrackBorder != null
-                          ? Border.all(color: effectiveTrackBorder, width: 1)
-                          : null,
-                    ),
-                  ),
-                ),
-
-                // 2. Draggable Animated Active Pill
-                AnimatedPositioned(
-                  duration: _dragging
-                      ? Duration.zero
-                      : const Duration(milliseconds: 320),
-                  curve: _springCurve,
-                  left: isRtl
-                      ? (totalWidth - (pillX + tabWidth - 3)).clamp(0.0, totalWidth)
-                      : (pillX + 3).clamp(0.0, totalWidth),
-                  top: _dragging ? -4 : 4,
-                  bottom: _dragging ? -4 : 4,
-                  width: (tabWidth - 6).clamp(0.0, totalWidth),
-                  child: AnimatedScale(
-                    scale: _dragging ? 1.08 : 1.0,
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: effectivePillColor,
-                        borderRadius: BorderRadius.circular(
-                          _dragging ? 30 : widget.borderRadius,
-                        ),
-                        border: effectivePillBorder != null
-                            ? Border.all(color: effectivePillBorder, width: 1)
-                            : null,
-                        boxShadow: widget.pillShadows ??
-                            [
-                              BoxShadow(
-                                color: Colors.black.withValues(
-                                  alpha: isDark
-                                      ? (_dragging ? 0.35 : 0.25)
-                                      : (_dragging ? 0.12 : 0.06),
-                                ),
-                                blurRadius: _dragging ? 10 : 6,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                      color: effectivePillColor,
+                      borderRadius: BorderRadius.circular(
+                        _dragging ? 30 : widget.borderRadius,
                       ),
+                      border: effectivePillBorder != null
+                          ? Border.all(color: effectivePillBorder, width: 1)
+                          : null,
+                      boxShadow: widget.pillShadows ??
+                          [
+                            BoxShadow(
+                              color: Colors.black.withValues(
+                                alpha: isDark
+                                    ? (_dragging ? 0.35 : 0.25)
+                                    : (_dragging ? 0.12 : 0.06),
+                              ),
+                              blurRadius: _dragging ? 10 : 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                     ),
                   ),
                 ),
+              ),
 
-                // 3. Tab Items & Gesture Interaction Layer
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onHorizontalDragStart: (_) {
-                      if (widget.enableHaptics) HapticFeedback.selectionClick();
-                      setState(() {
-                        _dragging = true;
-                        _dragX = baseX;
-                      });
-                    },
-                    onHorizontalDragUpdate: (details) {
-                      final double delta =
-                          details.primaryDelta ?? details.delta.dx;
-                      final double dx = isRtl ? -delta : delta;
-                      final double next = _dragX + dx;
-                      setState(() {
-                        if (next < minX || next > maxX) {
-                          _dragX += dx * 0.18;
-                        } else {
-                          _dragX = next;
-                        }
-                        _dragX = _dragX.clamp(minX - 16, maxX + 16);
-                      });
-                    },
-                    onHorizontalDragEnd: (details) {
-                      final double rawVelocity =
-                          details.velocity.pixelsPerSecond.dx;
-                      final double velocity = isRtl ? -rawVelocity : rawVelocity;
-                      final double frac =
-                          tabWidth > 0 ? (_dragX / tabWidth) : 0;
-
-                      int index;
-                      if (velocity > 500) {
-                        index = frac.floor() + 1;
-                      } else if (velocity < -500) {
-                        index = frac.ceil() - 1;
+              // 3. Tab Items & Gesture Interaction Layer
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onHorizontalDragStart: (_) {
+                    if (widget.enableHaptics) HapticFeedback.selectionClick();
+                    setState(() {
+                      _dragging = true;
+                      _dragX = baseX;
+                    });
+                  },
+                  onHorizontalDragUpdate: (details) {
+                    final double delta =
+                        details.primaryDelta ?? details.delta.dx;
+                    final double dx = isRtl ? -delta : delta;
+                    final double next = _dragX + dx;
+                    setState(() {
+                      if (next < minX || next > maxX) {
+                        _dragX += dx * 0.18;
                       } else {
-                        index = frac.round();
+                        _dragX = next;
                       }
-                      index = index.clamp(0, widget.items.length - 1);
+                      _dragX = _dragX.clamp(minX - 16, maxX + 16);
+                    });
+                  },
+                  onHorizontalDragEnd: (details) {
+                    final double rawVelocity =
+                        details.velocity.pixelsPerSecond.dx;
+                    final double velocity = isRtl ? -rawVelocity : rawVelocity;
+                    final double frac = tabWidth > 0 ? (_dragX / tabWidth) : 0;
 
-                      if (index != widget.currentIndex && widget.enableHaptics) {
-                        HapticFeedback.selectionClick();
-                      }
-                      setState(() => _dragging = false);
-                      widget.onChanged(index);
-                    },
-                    onHorizontalDragCancel: () {
-                      setState(() => _dragging = false);
-                    },
-                    child: Row(
-                      children: List.generate(widget.items.length, (i) {
-                        final item = widget.items[i];
-                        final bool active = i == widget.currentIndex;
-                        final color = active
-                            ? effectiveActiveColor
-                            : effectiveInactiveColor;
+                    int index;
+                    if (velocity > 500) {
+                      index = frac.floor() + 1;
+                    } else if (velocity < -500) {
+                      index = frac.ceil() - 1;
+                    } else {
+                      index = frac.round();
+                    }
+                    index = index.clamp(0, widget.items.length - 1);
 
-                        return Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              if (widget.enableHaptics) {
-                                HapticFeedback.lightImpact();
-                              }
-                              widget.onChanged(i);
-                            },
-                            child: SizedBox(
-                              height: double.infinity,
-                              child: Center(
-                                child: item.customWidget ??
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        if (item.icon != null) ...[
-                                          Icon(
-                                            item.icon,
-                                            size: 17,
-                                            color: color,
-                                          ),
-                                          const SizedBox(width: 6),
-                                        ],
-                                        Flexible(
-                                          child: FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              item.label,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 13.5,
-                                                fontWeight: active
-                                                    ? FontWeight.w600
-                                                    : FontWeight.w500,
-                                                color: color,
-                                                letterSpacing: -0.2,
-                                              ),
+                    if (index != widget.currentIndex && widget.enableHaptics) {
+                      HapticFeedback.selectionClick();
+                    }
+                    setState(() => _dragging = false);
+                    widget.onChanged(index);
+                  },
+                  onHorizontalDragCancel: () {
+                    setState(() => _dragging = false);
+                  },
+                  child: Row(
+                    children: List.generate(widget.items.length, (i) {
+                      final item = widget.items[i];
+                      final bool active = i == widget.currentIndex;
+                      final color = active
+                          ? effectiveActiveColor
+                          : effectiveInactiveColor;
+
+                      return Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            if (widget.enableHaptics) {
+                              HapticFeedback.lightImpact();
+                            }
+                            widget.onChanged(i);
+                          },
+                          child: SizedBox(
+                            height: double.infinity,
+                            child: Center(
+                              child: item.customWidget ??
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (item.icon != null) ...[
+                                        Icon(
+                                          item.icon,
+                                          size: 17,
+                                          color: color,
+                                        ),
+                                        const SizedBox(width: 6),
+                                      ],
+                                      Flexible(
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            item.label,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 13.5,
+                                              fontWeight: active
+                                                  ? FontWeight.w600
+                                                  : FontWeight.w500,
+                                              color: color,
+                                              letterSpacing: -0.2,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                              ),
+                                      ),
+                                    ],
+                                  ),
                             ),
                           ),
-                        );
-                      }),
-                    ),
+                        ),
+                      );
+                    }),
                   ),
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
+
+    if (widget.width != null) {
+      segmentedBar = Align(
+        alignment: widget.alignment,
+        heightFactor: 1.0,
+        child: SizedBox(
+          width: widget.width,
+          child: segmentedBar,
+        ),
+      );
+    }
+
+    if (widget.padding != EdgeInsets.zero) {
+      segmentedBar = Padding(
+        padding: widget.padding,
+        child: segmentedBar,
+      );
+    }
+
+    return segmentedBar;
   }
 }

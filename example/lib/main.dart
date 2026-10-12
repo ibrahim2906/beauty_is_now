@@ -182,6 +182,7 @@ class _ShowcaseScreenState extends State<ShowcaseScreen> {
                   const SizedBox(height: 12),
                   BeautySegmentedBar.fromStrings(
                     items: _segmentItems,
+                    width: 340,
                     currentIndex: _selectedSegment,
                     onChanged: (index) {
                       setState(() => _selectedSegment = index);
@@ -276,6 +277,7 @@ class _ShowcaseScreenState extends State<ShowcaseScreen> {
                         const SizedBox(height: 20),
                         BeautyNavBar(
                           currentIndex: _currentNavIndex,
+                          width: 320,
                           onChanged: (index) {
                             setState(() => _currentNavIndex = index);
                           },

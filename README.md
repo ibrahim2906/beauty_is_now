@@ -43,7 +43,7 @@ Open your project's terminal and run:
 flutter pub add beauty_is_now
 ```
 
-*(This automatically adds `beauty_is_now: ^1.0.2` to your `pubspec.yaml`)*
+*(This automatically adds `beauty_is_now: ^1.1.0` to your `pubspec.yaml`)*
 
 ---
 
@@ -203,6 +203,39 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 ```
+
+---
+
+## 📐 Fixed Width (Bar Size)
+
+Both `BeautyNavBar` and `BeautySegmentedBar` expand to fill the available width by default.
+Pass a `width` to lock them to an exact size; the widget is then aligned horizontally
+(use `alignment` to change it — defaults to `Alignment.center`).
+
+```dart
+// Segmented bar constrained to 340px, centered.
+BeautySegmentedBar.fromStrings(
+  items: const ['Overview', 'Analytics', 'Settings'],
+  width: 340,
+  currentIndex: _selectedIndex,
+  onChanged: (index) => setState(() => _selectedIndex = index),
+)
+
+// Navigation bar constrained to 320px, centered.
+BeautyNavBar(
+  currentIndex: _currentNavIndex,
+  onChanged: (index) => setState(() => _currentNavIndex = index),
+  width: 320,
+  // alignment: Alignment.centerLeft, // optional
+  items: const [
+    BeautyNavItem(label: 'Home', icon: Icons.home_rounded),
+    BeautyNavItem(label: 'Search', icon: Icons.search_rounded),
+    BeautyNavItem(label: 'Profile', icon: Icons.person_rounded),
+  ],
+)
+```
+
+Omit `width` (or pass `null`) to keep the responsive, full-width behavior.
 
 ---
 

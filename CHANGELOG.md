@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.0
+
+* Added a configurable `width` (and `alignment`) to `BeautyNavBar` and `BeautySegmentedBar`. When omitted, both widgets keep the previous behavior and expand to fill the available width.
+
 ## 1.0.2
 
 * Cleaned up README documentation and user guides.
