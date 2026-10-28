@@ -15,6 +15,7 @@ Engineered with zero third-party dependencies, 100% pure Flutter, full Light & D
 ## ✨ Features
 
 - 🎛️ **BeautySegmentedBar**: Interactive fluid segmented bar with spring drag physics, touch scale expansion, adaptive light/dark theming, and full RTL (Right-to-Left) support.
+- 🎚️ **Deep Customization**: Control every dimension (width, maxWidth, height, pill padding, segment padding, corner radius, border widths), typography (text styles, icon size and spacing), drag physics and animation timing.
 - 🪟 **BeautyWindow & showBeautyWindow**: Glassmorphic modal window with a swipe-down-to-dismiss handle, circular close 'X' button, vibrant blue checkmark button, and smooth entrance transitions.
 - 🧭 **BeautyNavBar**: Sleek draggable floating navigation bar with spring physics, active pill expansion during gestures, and haptic feedback.
 - 🌓 **Adaptive Theming**: Automatically adapts to Light and Dark modes without any extra configuration.
@@ -43,7 +44,7 @@ Open your project's terminal and run:
 flutter pub add beauty_is_now
 ```
 
-*(This automatically adds `beauty_is_now: ^1.1.2` to your `pubspec.yaml`)*
+*(This automatically adds `beauty_is_now: ^1.2.0` to your `pubspec.yaml`)*
 
 ---
 
@@ -206,17 +207,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
 ---
 
-## 📐 Fixed Width (Bar Size)
+## 📐 Sizing & Full Customization
+
+### Width, max width, height & alignment
 
 Both `BeautyNavBar` and `BeautySegmentedBar` expand to fill the available width by default.
-Pass a `width` to lock them to an exact size; the widget is then aligned horizontally
-(use `alignment` to change it — defaults to `Alignment.center`).
+Pass a `width` to lock them to an exact size, or `maxWidth` to keep a responsive bar from
+growing too wide on tablets and desktop. A fixed bar is aligned horizontally according to
+`alignment` (defaults to `Alignment.center`).
 
 ```dart
-// Segmented bar constrained to 340px, centered.
+// Segmented bar locked to 340 x 52, centered.
 BeautySegmentedBar.fromStrings(
   items: const ['Overview', 'Analytics', 'Settings'],
   width: 340,
+  height: 52,
+  currentIndex: _selectedIndex,
+  onChanged: (index) => setState(() => _selectedIndex = index),
+)
+
+// Responsive, but never wider than 420px and left aligned.
+BeautySegmentedBar.fromStrings(
+  items: const ['Day', 'Week', 'Month'],
+  maxWidth: 420,
+  alignment: Alignment.centerLeft,
   currentIndex: _selectedIndex,
   onChanged: (index) => setState(() => _selectedIndex = index),
 )
@@ -235,7 +249,102 @@ BeautyNavBar(
 )
 ```
 
-Omit `width` (or pass `null`) to keep the responsive, full-width behavior.
+Omit `width` and `maxWidth` (or pass `null`) to keep the responsive, full-width behavior.
+
+---
+
+### `BeautySegmentedBar` property reference
+
+**Size & layout**
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| `width` | `double?` | `null` | Exact bar width. `null` = fill available width. |
+| `maxWidth` | `double?` | `null` | Upper bound used when `width` is `null`. |
+| `height` | `double` | `46.0` | Total bar height. |
+| `alignment` | `AlignmentGeometry` | `Alignment.center` | Alignment when `width`/`maxWidth` is applied. |
+| `padding` | `EdgeInsetsGeometry` | `EdgeInsets.zero` | Padding around the whole bar. |
+| `borderRadius` | `double` | `100.0` | Corner radius of track and pill. |
+| `pillPadding` | `EdgeInsetsGeometry` | `symmetric(horizontal: 3, vertical: 4)` | Inset of the sliding pill inside the track. |
+| `segmentPadding` | `EdgeInsetsGeometry` | `symmetric(horizontal: 4)` | Padding inside each segment around its label/icon. |
+
+**Typography**
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| `textStyle` | `TextStyle?` | `13.5px`, `w500`, `-0.2` spacing | Base label style. Its `color` wins over the active/inactive colors when set. |
+| `activeTextStyle` | `TextStyle?` | `null` | Extra style merged over `textStyle` for the selected segment only. |
+| `iconSize` | `double` | `17.0` | Leading icon size. |
+| `iconSpacing` | `double` | `6.0` | Gap between icon and label. |
+
+**Colors**
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| `trackColor` | `Color?` | theme adaptive | Background of the track. |
+| `trackBorderColor` / `trackBorderWidth` | `Color?` / `double` | `null` / `1.0` | Optional track border. |
+| `pillColor` | `Color?` | theme adaptive | Color of the active pill. |
+| `pillBorderColor` / `pillBorderWidth` | `Color?` / `double` | `null` / `1.0` | Optional pill border. |
+| `pillShadows` | `List<BoxShadow>?` | soft adaptive shadow | Custom elevation for the pill. |
+| `activeColor` / `inactiveColor` | `Color?` | theme adaptive | Label/icon colors for each state. |
+
+**Interaction & animation**
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | `bool` | `true` | When `false`, the bar is a static, non-interactive display. |
+| `dragEnabled` | `bool` | `true` | Allow dragging the pill; taps still work when `false`. |
+| `enableHaptics` | `bool` | `true` | Haptic feedback on taps and drag transitions. |
+| `dragExpand` | `double` | `4.0` | How far the pill overflows the track while dragging (`0` keeps it inside). |
+| `dragScale` | `double` | `1.08` | Pill scale while dragging. |
+| `dragBorderRadius` | `double?` | `borderRadius` | Corner radius while dragging. |
+| `animationDuration` | `Duration` | `320ms` | Snap animation duration. |
+| `animationCurve` | `Curve` | spring `Cubic` | Snap animation curve. |
+| `onChanged` | `ValueChanged<int>` | — | Fired on tap or drag drop. |
+
+### Fully styled example
+
+```dart
+BeautySegmentedBar.fromStrings(
+  items: const ['Overview', 'Analytics', 'Settings'],
+  currentIndex: _selectedIndex,
+  onChanged: (index) => setState(() => _selectedIndex = index),
+  // Size
+  width: 380,
+  height: 56,
+  borderRadius: 16,
+  pillPadding: const EdgeInsets.all(6),
+  segmentPadding: const EdgeInsets.symmetric(horizontal: 8),
+  // Typography
+  textStyle: const TextStyle(fontSize: 15, letterSpacing: 0),
+  activeTextStyle: const TextStyle(fontWeight: FontWeight.w800),
+  iconSize: 18,
+  iconSpacing: 8,
+  // Colors
+  trackColor: const Color(0xFFF1F5F9),
+  pillColor: const Color(0xFF0EA5E9),
+  activeColor: Colors.white,
+  inactiveColor: const Color(0xFF64748B),
+  // Motion
+  animationDuration: const Duration(milliseconds: 260),
+  animationCurve: Curves.easeOutBack,
+  dragExpand: 0,
+  dragScale: 1.04,
+)
+```
+
+### Static badge / read-only display
+
+```dart
+BeautySegmentedBar.fromStrings(
+  items: const ['Draft', 'Review', 'Published'],
+  currentIndex: 2,
+  onChanged: (_) {},
+  enabled: false,   // no taps, no drag
+  dragEnabled: false,
+  height: 36,
+)
+```
 
 ---
 

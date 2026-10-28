@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.0
+
+* **BeautySegmentedBar is now fully customizable.** New properties:
+  * Sizing: `maxWidth` (responsive upper bound next to `width`), fully configurable `pillPadding` and `segmentPadding`, plus `trackBorderWidth` / `pillBorderWidth`.
+  * Typography: `textStyle` (base label style, color respected), `activeTextStyle` (selected label emphasis), `iconSize` and `iconSpacing`.
+* Interaction: `enabled` (static/read-only bar), `dragEnabled` (tap-only mode), `dragExpand`, `dragScale` and `dragBorderRadius`.
+* Motion: `animationDuration` and `animationCurve` for the pill snap animation.
+* The dragged pill now keeps the resting corner radius by default instead of snapping to a hard-coded `30`; use `dragBorderRadius` to restore a custom drag shape.
+* `BeautySegmentedBar.fromStrings` accepts every new property.
+* README: new property reference tables and fully styled / read-only examples.
+
 ## 1.1.2
 
 * Republish release with the configurable `width` and `alignment` support.
