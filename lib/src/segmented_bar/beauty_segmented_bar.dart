@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'segmented_item.dart';
 
 /// An interactive, fluid segmented bar featuring smooth spring drag physics,
-/// dynamic scale expansion, adaptive light/dark theming, and full RTL support.
+/// dynamic pill and whole-bar scale expansion, adaptive light/dark theming, and
+/// full RTL support.
 ///
 /// Every visual and behavioural aspect can be tuned: size ([width], [height],
 /// [pillPadding], [segmentPadding]), typography ([textStyle],
@@ -121,6 +122,17 @@ class BeautySegmentedBar extends StatefulWidget {
   /// Scale of the pill while it is being dragged. Defaults to `1.08`.
   final double dragScale;
 
+  /// Scale applied to the whole segmented bar while the pill is being dragged.
+  /// Defaults to `1.03`.
+  ///
+  /// The bar smoothly grows to this scale when a drag starts and eases back to
+  /// `1.0` when the pill is released. Set to `1.0` to disable the effect.
+  final double dragBarScale;
+
+  /// Duration of the smooth grow/shrink animation of the bar while dragging.
+  /// Defaults to `240ms`.
+  final Duration dragBarScaleDuration;
+
   /// Corner radius of the pill while it is being dragged.
   /// Defaults to [borderRadius] (fully pill-shaped).
   final double? dragBorderRadius;
@@ -170,6 +182,8 @@ class BeautySegmentedBar extends StatefulWidget {
     this.dragEnabled = true,
     this.dragExpand = 4.0,
     this.dragScale = 1.08,
+    this.dragBarScale = 1.03,
+    this.dragBarScaleDuration = const Duration(milliseconds: 240),
     this.dragBorderRadius,
     this.enabled = true,
     this.animationDuration = const Duration(milliseconds: 320),
@@ -209,6 +223,8 @@ class BeautySegmentedBar extends StatefulWidget {
     bool dragEnabled = true,
     double dragExpand = 4.0,
     double dragScale = 1.08,
+    double dragBarScale = 1.03,
+    Duration dragBarScaleDuration = const Duration(milliseconds: 240),
     double? dragBorderRadius,
     bool enabled = true,
     Duration animationDuration = const Duration(milliseconds: 320),
@@ -244,6 +260,8 @@ class BeautySegmentedBar extends StatefulWidget {
       dragEnabled: dragEnabled,
       dragExpand: dragExpand,
       dragScale: dragScale,
+      dragBarScale: dragBarScale,
+      dragBarScaleDuration: dragBarScaleDuration,
       dragBorderRadius: dragBorderRadius,
       enabled: enabled,
       animationDuration: animationDuration,
@@ -328,8 +346,7 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
         final double baseX = safeCurrentIndex * tabWidth;
         final double pillX = _dragging ? _dragX : baseX;
 
-        final double pillHorizontalInset =
-            widget.pillPadding.horizontal / 2;
+        final double pillHorizontalInset = widget.pillPadding.horizontal / 2;
         final double pillVerticalInset = widget.pillPadding.vertical / 2;
 
         return SizedBox(
@@ -356,8 +373,7 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
 
               // 2. Draggable Animated Active Pill
               AnimatedPositioned(
-                duration:
-                    _dragging ? Duration.zero : widget.animationDuration,
+                duration: _dragging ? Duration.zero : widget.animationDuration,
                 curve: widget.animationCurve,
                 left: isRtl
                     ? (totalWidth - (pillX + tabWidth - pillHorizontalInset))
@@ -417,23 +433,22 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
                             _dragX = baseX;
                           });
                         },
-                  onHorizontalDragUpdate:
-                      !widget.enabled || !widget.dragEnabled
-                          ? null
-                          : (details) {
-                              final double delta =
-                                  details.primaryDelta ?? details.delta.dx;
-                              final double dx = isRtl ? -delta : delta;
-                              final double next = _dragX + dx;
-                              setState(() {
-                                if (next < minX || next > maxX) {
-                                  _dragX += dx * 0.18;
-                                } else {
-                                  _dragX = next;
-                                }
-                                _dragX = _dragX.clamp(minX - 16, maxX + 16);
-                              });
-                            },
+                  onHorizontalDragUpdate: !widget.enabled || !widget.dragEnabled
+                      ? null
+                      : (details) {
+                          final double delta =
+                              details.primaryDelta ?? details.delta.dx;
+                          final double dx = isRtl ? -delta : delta;
+                          final double next = _dragX + dx;
+                          setState(() {
+                            if (next < minX || next > maxX) {
+                              _dragX += dx * 0.18;
+                            } else {
+                              _dragX = next;
+                            }
+                            _dragX = _dragX.clamp(minX - 16, maxX + 16);
+                          });
+                        },
                   onHorizontalDragEnd: !widget.enabled || !widget.dragEnabled
                       ? null
                       : (details) {
@@ -461,12 +476,11 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
                           setState(() => _dragging = false);
                           widget.onChanged(index);
                         },
-                  onHorizontalDragCancel:
-                      !widget.enabled || !widget.dragEnabled
-                          ? null
-                          : () {
-                              setState(() => _dragging = false);
-                            },
+                  onHorizontalDragCancel: !widget.enabled || !widget.dragEnabled
+                      ? null
+                      : () {
+                          setState(() => _dragging = false);
+                        },
                   child: Row(
                     children: List.generate(widget.items.length, (i) {
                       final item = widget.items[i];
@@ -527,6 +541,15 @@ class _BeautySegmentedBarState extends State<BeautySegmentedBar> {
           ),
         );
       },
+    );
+
+    // Smoothly grow the whole bar while the pill is being pulled, then ease
+    // back to its resting size once it is released.
+    segmentedBar = AnimatedScale(
+      scale: _dragging ? widget.dragBarScale : 1.0,
+      duration: widget.dragBarScaleDuration,
+      curve: Curves.easeOutCubic,
+      child: segmentedBar,
     );
 
     if (widget.width != null) {

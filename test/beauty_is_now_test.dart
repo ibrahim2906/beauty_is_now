@@ -26,6 +26,52 @@ void main() {
       await tester.pumpAndSettle();
       expect(selected, 1);
     });
+
+    testWidgets('grows while dragging the pill and shrinks on release', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 320,
+                child: BeautySegmentedBar.fromStrings(
+                  items: const ['Tab 1', 'Tab 2', 'Tab 3'],
+                  currentIndex: 0,
+                  onChanged: (_) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(BeautySegmentedBar)),
+      );
+      await gesture.moveBy(const Offset(40, 0));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+        tester
+            .widgetList<AnimatedScale>(find.byType(AnimatedScale))
+            .first
+            .scale,
+        1.03,
+      );
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widgetList<AnimatedScale>(find.byType(AnimatedScale))
+            .first
+            .scale,
+        1.0,
+      );
+    });
   });
 
   group('BeautyWindow Tests', () {
@@ -84,6 +130,55 @@ void main() {
       await tester.tap(find.byIcon(Icons.search));
       await tester.pumpAndSettle();
       expect(activeIndex, 1);
+    });
+
+    testWidgets('grows while dragging the pill and shrinks on release', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 320,
+                child: BeautyNavBar(
+                  currentIndex: 0,
+                  onChanged: (_) {},
+                  items: const [
+                    BeautyNavItem(label: 'Home', icon: Icons.home),
+                    BeautyNavItem(label: 'Search', icon: Icons.search),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(BeautyNavBar)),
+      );
+      await gesture.moveBy(const Offset(40, 0));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+        tester
+            .widgetList<AnimatedScale>(find.byType(AnimatedScale))
+            .first
+            .scale,
+        1.03,
+      );
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widgetList<AnimatedScale>(find.byType(AnimatedScale))
+            .first
+            .scale,
+        1.0,
+      );
     });
   });
 }

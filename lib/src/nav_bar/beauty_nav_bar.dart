@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'beauty_nav_item.dart';
 
 /// A sleek draggable floating pill navigation bar featuring spring physics,
-/// touch drag-tracking with dynamic scale expansion, adaptive light/dark theming,
-/// and haptic feedback.
+/// touch drag-tracking with dynamic pill and whole-bar scale expansion,
+/// adaptive light/dark theming, and haptic feedback.
 class BeautyNavBar extends StatefulWidget {
   /// The navigation destination items.
   final List<BeautyNavItem> items;
@@ -23,6 +23,17 @@ class BeautyNavBar extends StatefulWidget {
 
   /// Corner radius of the active floating pill. Defaults to `22.0`.
   final double pillRadius;
+
+  /// Scale applied to the whole navigation bar while its pill is being
+  /// dragged. Defaults to `1.03`.
+  ///
+  /// The bar smoothly grows to this scale when a drag starts and eases back to
+  /// `1.0` when the pill is released. Set to `1.0` to disable the effect.
+  final double dragBarScale;
+
+  /// Duration of the smooth grow/shrink animation of the bar while dragging.
+  /// Defaults to `240ms`.
+  final Duration dragBarScaleDuration;
 
   /// Background color of the navigation bar container.
   /// If null, automatically resolves based on [Theme.of(context).brightness].
@@ -85,6 +96,8 @@ class BeautyNavBar extends StatefulWidget {
     this.height = 64.0,
     this.containerRadius = 28.0,
     this.pillRadius = 22.0,
+    this.dragBarScale = 1.03,
+    this.dragBarScaleDuration = const Duration(milliseconds: 240),
     this.backgroundColor,
     this.borderColor,
     this.pillColor,
@@ -373,6 +386,15 @@ class _BeautyNavBarState extends State<BeautyNavBar> {
           );
         },
       ),
+    );
+
+    // Smoothly grow the whole bar while the pill is being pulled, then ease
+    // back to its resting size once it is released.
+    navBarWidget = AnimatedScale(
+      scale: _dragging ? widget.dragBarScale : 1.0,
+      duration: widget.dragBarScaleDuration,
+      curve: Curves.easeOutCubic,
+      child: navBarWidget,
     );
 
     if (widget.width != null) {

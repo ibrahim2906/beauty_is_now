@@ -14,10 +14,10 @@ Engineered with zero third-party dependencies, 100% pure Flutter, full Light & D
 
 ## ✨ Features
 
-- 🎛️ **BeautySegmentedBar**: Interactive fluid segmented bar with spring drag physics, touch scale expansion, adaptive light/dark theming, and full RTL (Right-to-Left) support.
+- 🎛️ **BeautySegmentedBar**: Interactive fluid segmented bar with spring drag physics, touch scale expansion, whole-bar growth while dragging, adaptive light/dark theming, and full RTL (Right-to-Left) support.
 - 🎚️ **Deep Customization**: Control every dimension (width, maxWidth, height, pill padding, segment padding, corner radius, border widths), typography (text styles, icon size and spacing), drag physics and animation timing.
 - 🪟 **BeautyWindow & showBeautyWindow**: Glassmorphic modal window with a swipe-down-to-dismiss handle, circular close 'X' button, vibrant blue checkmark button, and smooth entrance transitions.
-- 🧭 **BeautyNavBar**: Sleek draggable floating navigation bar with spring physics, active pill expansion during gestures, and haptic feedback.
+- 🧭 **BeautyNavBar**: Sleek draggable floating navigation bar with spring physics, active pill expansion and a subtle whole-bar scale-up during gestures, and haptic feedback.
 - 🌓 **Adaptive Theming**: Automatically adapts to Light and Dark modes without any extra configuration.
 - ⚡ **Zero External Dependencies**: Pure Flutter framework widgets with Cupertino icons and Material Design.
 - 📱 **All Platforms Supported**: Android, iOS, Web, Windows, macOS, Linux.
@@ -44,7 +44,7 @@ Open your project's terminal and run:
 flutter pub add beauty_is_now
 ```
 
-*(This automatically adds `beauty_is_now: ^1.2.0` to your `pubspec.yaml`)*
+*(This automatically adds `beauty_is_now: ^1.3.0` to your `pubspec.yaml`)*
 
 ---
 
@@ -205,6 +205,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 ```
 
+While you pull the pill, the whole bar smoothly grows by a few percent and eases back to its resting size on release. Tune the effect with `dragBarScale` (default `1.03`) and `dragBarScaleDuration` (default `240ms`), or disable it with `dragBarScale: 1.0`.
+
 ---
 
 ## 📐 Sizing & Full Customization
@@ -297,6 +299,8 @@ Omit `width` and `maxWidth` (or pass `null`) to keep the responsive, full-width 
 | `enableHaptics` | `bool` | `true` | Haptic feedback on taps and drag transitions. |
 | `dragExpand` | `double` | `4.0` | How far the pill overflows the track while dragging (`0` keeps it inside). |
 | `dragScale` | `double` | `1.08` | Pill scale while dragging. |
+| `dragBarScale` | `double` | `1.03` | Scale of the whole bar while the pill is being dragged (`1.0` disables it). |
+| `dragBarScaleDuration` | `Duration` | `240ms` | Duration of the smooth bar grow/shrink animation. |
 | `dragBorderRadius` | `double?` | `borderRadius` | Corner radius while dragging. |
 | `animationDuration` | `Duration` | `320ms` | Snap animation duration. |
 | `animationCurve` | `Curve` | spring `Cubic` | Snap animation curve. |
@@ -330,6 +334,7 @@ BeautySegmentedBar.fromStrings(
   animationCurve: Curves.easeOutBack,
   dragExpand: 0,
   dragScale: 1.04,
+  dragBarScale: 1.02,
 )
 ```
 

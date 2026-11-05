@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.0
+
+* `BeautyNavBar` and `BeautySegmentedBar` now smoothly grow while their pill is being dragged and ease back to their resting size on release.
+* Added `dragBarScale` (default `1.03`) and `dragBarScaleDuration` (default `240ms`) to both widgets. Set `dragBarScale` to `1.0` to disable the effect.
+
 ## 1.2.0
 
 * **BeautySegmentedBar is now fully customizable.** New properties:
